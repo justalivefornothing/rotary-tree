@@ -1,6 +1,7 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { type RotationCase, height } from './tree/avl'
 import { bf, find, size } from './tree/node'
+import { range, seededShuffle, zigzag } from './tree/seq'
 import { Controls } from './ui/Controls'
 import { OpLog } from './ui/OpLog'
 import { TreeCanvas } from './ui/TreeCanvas'
@@ -34,6 +35,20 @@ export default function App() {
 
   const visited = useMemo(() => new Set(traversal ? traversal.keys.slice(0, traversal.i) : []), [traversal])
   const cursor = traversal && traversal.i > 0 ? (traversal.keys[traversal.i - 1] ?? null) : null
+
+  // Shareable links: ?seq=asc|rand|zig&n=10&seed=3 autoplay a sequence on load.
+  const booted = useRef(false)
+  useEffect(() => {
+    if (booted.current) return
+    booted.current = true
+    const q = new URLSearchParams(window.location.search)
+    const seq = q.get('seq')
+    if (!seq) return
+    const n = Math.min(Math.max(Number(q.get('n')) || 10, 1), 31)
+    const seed = Number(q.get('seed')) || 3
+    const keys = seq === 'rand' ? seededShuffle(range(1, n), seed) : seq === 'zig' ? zigzag(n) : range(1, n)
+    dispatch({ type: 'enqueue', ops: keys.map((key) => ({ op: 'insert' as const, key })) })
+  }, [dispatch])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -141,7 +156,7 @@ export default function App() {
             )}
             <footer className="status" aria-live="polite">
               <span className={`dot ${busy ? 'live' : ''}`} aria-hidden="true" />
-              <span className="min-w-0 flex-1 truncate">{status}</span>
+              <span className="min-w-0 flex-1">{status}</span>
               {active?.guess && (
                 <span className={`guess ${active.guess.correct ? 'ok' : 'miss'}`}>{active.guess.correct ? `${active.guess.picked} ✓` : `not ${active.guess.picked}`}</span>
               )}
@@ -164,7 +179,7 @@ export default function App() {
             </div>
             <footer className="status">
               <span className="dot" aria-hidden="true" />
-              <span className="truncate">
+              <span>
                 {ghost.root
                   ? `Same ${n} keys inserted in the same order. ${ghostH > avlH ? `${ghostH - avlH} level${ghostH - avlH === 1 ? '' : 's'} deeper than the AVL tree.` : 'Same height as the AVL tree — for now.'}`
                   : 'Mirrors every operation without rebalancing.'}

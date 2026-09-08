@@ -15,7 +15,7 @@ interface Props {
   onClear: () => void
 }
 
-const SIZES = [7, 10, 15, 20, 31]
+const SIZES = [7, 10, 15, 20]
 
 export function Controls({ busy, hasTree, stepMode, onInsert, onRemove, onBulk, onTraverse, onStepMode, onStop, onClear }: Props) {
   const [text, setText] = useState('')

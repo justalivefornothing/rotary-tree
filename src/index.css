@@ -108,10 +108,10 @@ body {
   }
 
   .status {
-    @apply flex items-center gap-2 border-t border-white/10 px-4 py-2 text-xs text-ink/75;
+    @apply flex items-start gap-2 border-t border-white/10 px-4 py-2 text-xs text-ink/75;
   }
   .dot {
-    @apply inline-block size-1.5 shrink-0 bg-ink/30;
+    @apply mt-[5px] inline-block size-1.5 shrink-0 bg-ink/30;
   }
   .dot.live {
     @apply bg-glow;
@@ -194,7 +194,7 @@ body {
   user-select: none;
 }
 .tree-svg .empty-text {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 300;
   fill: rgb(232 238 255 / 0.4);
 }
