@@ -29,15 +29,16 @@ node flashing before the fix.
 
 ```
 src/
-  avl/
+  tree/
     avl.ts        immutable AVL: insert/remove return { tree, events, phases }
     bst.ts        plain unbalanced BST for the ghost panel
     layout.ts     x by in-order rank, y by depth -> positioned nodes
     seq.ts        ascending / seeded shuffle / zig-zag generators
+    node.ts       shared immutable node primitives, plain insert/remove
     *.test.ts     vitest specs
   ui/
     TreeCanvas    SVG renderer, CSS-transitioned transforms keyed by value
-    RotationArc   dashed cyan arrow from pivot to its new position
+    usePlayer     reducer + timers: queue → phases → history
     Controls      key input, bulk buttons, step mode toggle, traversal
     OpLog         rotation events, click to replay
   App.tsx         state machine: idle -> inserted (unbalanced) -> rebalanced
@@ -56,9 +57,9 @@ rotations.
 
 ## Milestones
 
-- [ ] plan, license, scaffold
-- [ ] AVL core + BST ghost + layout, tests green
-- [ ] SVG canvas with tweened nodes, badges, rotation arcs
-- [ ] controls, bulk sequences, op log with replay
-- [ ] step mode and traversal ticker
-- [ ] polish: blueprint styling, keyboard, responsive, README
+- [x] plan, license, scaffold
+- [x] AVL core + BST ghost + layout, tests green
+- [x] SVG canvas with tweened nodes, badges, rotation arcs
+- [x] controls, bulk sequences, op log with replay
+- [x] step mode and traversal ticker
+- [x] polish: blueprint styling, keyboard, responsive, README
