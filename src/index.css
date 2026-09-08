@@ -1,1 +1,370 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import '@fontsource/ibm-plex-mono/300.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+
+@theme {
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --color-cobalt-950: #06122f;
+  --color-cobalt-900: #0b1f4d;
+  --color-cobalt-800: #123069;
+  --color-ink: #e8eeff;
+  --color-glow: #22d3ee;
+  --color-rose: #fb7185;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-cobalt-900 font-mono text-ink antialiased;
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    radial-gradient(ellipse at top, #123069 0%, #0b1f4d 55%, #06122f 100%);
+  background-size:
+    24px 24px,
+    24px 24px,
+    120px 120px,
+    120px 120px,
+    100% 100%;
+  background-attachment: fixed;
+}
+
+@layer components {
+  .panel {
+    @apply relative border border-white/20 bg-cobalt-900/60 backdrop-blur-[2px];
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.04);
+  }
+  /* blueprint corner ticks */
+  .panel::before,
+  .panel::after {
+    content: '';
+    @apply pointer-events-none absolute size-2 border-glow/70;
+  }
+  .panel::before {
+    @apply -top-px -left-px border-t border-l;
+  }
+  .panel::after {
+    @apply -right-px -bottom-px border-r border-b;
+  }
+
+  .canvas {
+    @apply relative h-[300px] p-3 sm:h-[400px] lg:h-[calc(100dvh-17rem)] lg:min-h-[420px] lg:max-h-[640px];
+  }
+
+  .label {
+    @apply text-[11px] font-medium tracking-[0.18em] uppercase text-ink/85;
+  }
+  .hint {
+    @apply text-[11px] leading-snug text-ink/50;
+  }
+
+  .field {
+    @apply border border-white/25 bg-cobalt-950/60 px-2.5 py-1.5 text-sm text-ink outline-none;
+    @apply placeholder:text-ink/35 focus-visible:border-glow focus-visible:ring-2 focus-visible:ring-glow/30;
+  }
+
+  .btn {
+    @apply border border-white/25 bg-white/[0.04] px-2.5 py-1.5 text-xs text-ink transition-colors;
+    @apply hover:border-white/60 hover:bg-white/[0.09] focus-visible:border-glow focus-visible:ring-2 focus-visible:ring-glow/30 focus-visible:outline-none;
+    @apply disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-white/25 disabled:hover:bg-white/[0.04];
+  }
+  .btn-primary {
+    @apply border-glow/70 bg-glow/15 text-glow hover:border-glow hover:bg-glow/25 disabled:hover:border-glow/70 disabled:hover:bg-glow/15;
+  }
+  .btn-danger {
+    @apply hover:border-rose/80 hover:bg-rose/10 hover:text-rose;
+  }
+
+  .switch {
+    @apply flex cursor-pointer items-center gap-2 text-xs select-none;
+  }
+  .switch input {
+    @apply sr-only;
+  }
+  .switch .track {
+    @apply relative h-4 w-8 border border-white/30 transition-colors;
+  }
+  .switch .track::after {
+    content: '';
+    @apply absolute top-0.5 left-0.5 size-2.5 bg-ink/60 transition-transform;
+  }
+  .switch input:checked + .track {
+    @apply border-glow bg-glow/20;
+  }
+  .switch input:checked + .track::after {
+    @apply translate-x-4 bg-glow;
+  }
+  .switch input:focus-visible + .track {
+    @apply ring-2 ring-glow/40;
+  }
+
+  .status {
+    @apply flex items-center gap-2 border-t border-white/10 px-4 py-2 text-xs text-ink/75;
+  }
+  .dot {
+    @apply inline-block size-1.5 shrink-0 bg-ink/30;
+  }
+  .dot.live {
+    @apply bg-glow;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  .prompt {
+    @apply absolute top-14 right-4 left-4 z-10 border border-glow/60 bg-cobalt-950/90 p-4 shadow-[0_0_0_1px_rgb(34_211_238_/_0.15),0_20px_60px_rgb(0_0_0_/_0.5)] sm:left-auto sm:w-80;
+    animation: rise 220ms var(--ease-spring);
+  }
+
+  .ticker {
+    @apply flex flex-wrap gap-1 border-t border-white/10 px-4 py-2;
+  }
+  .chip {
+    @apply min-w-6 border border-white/15 px-1.5 py-0.5 text-center text-[11px] text-ink/35 transition-colors;
+  }
+  .chip.seen {
+    @apply border-white/40 text-ink/85;
+  }
+  .chip.now {
+    @apply border-glow bg-glow/20 text-glow;
+  }
+
+  .guess {
+    @apply shrink-0 border px-1.5 py-px text-[10px] tracking-wide uppercase;
+  }
+  .guess.ok {
+    @apply border-glow/60 text-glow;
+  }
+  .guess.miss {
+    @apply border-rose/60 text-rose;
+  }
+
+  .log {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+  }
+  .log-row {
+    @apply flex w-full flex-wrap items-center gap-x-2 gap-y-1 border-l-2 border-transparent px-2 py-1.5 text-left text-xs transition-colors;
+    @apply hover:bg-white/[0.06] focus-visible:bg-white/[0.06] focus-visible:outline-none disabled:cursor-default disabled:hover:bg-transparent;
+  }
+  .log-row.head {
+    @apply border-glow/70;
+  }
+  .log-row.future {
+    @apply opacity-40;
+  }
+  .log-row.playing {
+    @apply bg-glow/10;
+  }
+  .log-row .idx {
+    @apply text-ink/35;
+  }
+  .log-row .op {
+    @apply text-ink;
+  }
+  .log-row .kind {
+    @apply border border-white/30 px-1 text-[10px] text-ink/80;
+  }
+  .log-row .ev {
+    @apply text-glow/90;
+  }
+  .log-row .ev.muted {
+    @apply text-ink/40;
+  }
+}
+
+/* ---- SVG tree ---------------------------------------------------------- */
+
+.tree-svg {
+  overflow: visible;
+}
+.tree-svg.ghost {
+  opacity: 0.4;
+}
+.tree-svg text {
+  font-family: var(--font-mono);
+  fill: var(--color-ink);
+  user-select: none;
+}
+.tree-svg .empty-text {
+  font-size: 12px;
+  font-weight: 300;
+  fill: rgb(232 238 255 / 0.4);
+}
+
+.tree-svg .edge {
+  transition: transform 420ms var(--ease-spring);
+}
+.tree-svg .edge line {
+  stroke: rgb(255 255 255 / 0.85);
+  stroke-width: 1;
+}
+
+.tree-svg .node {
+  transition: transform 420ms var(--ease-spring);
+}
+.tree-svg .disc {
+  fill: var(--color-cobalt-900);
+  stroke: #fff;
+  stroke-width: 1;
+  transition:
+    fill 200ms,
+    stroke 200ms;
+}
+.tree-svg .key {
+  font-size: 12px;
+  font-weight: 300;
+  transition: fill 200ms;
+}
+.tree-svg .bf-badge {
+  fill: var(--color-cobalt-950);
+  stroke: rgb(255 255 255 / 0.55);
+  stroke-width: 0.75;
+  transition: stroke 200ms;
+}
+.tree-svg .bf-badge.bad {
+  stroke: var(--color-rose);
+  fill: rgb(251 113 133 / 0.25);
+}
+.tree-svg .bf-text {
+  font-size: 8px;
+  fill: rgb(232 238 255 / 0.9);
+}
+.tree-svg .h-text {
+  font-size: 7.5px;
+  font-weight: 300;
+  fill: rgb(232 238 255 / 0.5);
+}
+
+/* pivot glows cyan, riser gets a cyan ring, violator flashes before the fix */
+.tree-svg .pivot .disc {
+  fill: var(--color-glow);
+  stroke: var(--color-glow);
+  filter: drop-shadow(0 0 6px rgb(34 211 238 / 0.9));
+}
+.tree-svg .pivot .key {
+  fill: var(--color-cobalt-950);
+  font-weight: 500;
+}
+.tree-svg .riser .disc {
+  stroke: var(--color-glow);
+  stroke-width: 1.5;
+}
+.tree-svg .violator .disc {
+  animation: flash 500ms ease-in-out 2;
+}
+.tree-svg .visited .disc {
+  stroke: var(--color-glow);
+}
+.tree-svg .current .disc {
+  fill: rgb(34 211 238 / 0.25);
+}
+
+.tree-svg .pop {
+  animation: pop 420ms var(--ease-spring);
+}
+
+.tree-svg .arc {
+  fill: none;
+  stroke: var(--color-glow);
+  stroke-dasharray: 4 3;
+  animation:
+    march 700ms linear infinite,
+    fade-in 200ms ease-out;
+}
+.tree-svg .arc-pivot {
+  stroke-width: 1.5;
+}
+.tree-svg .arc-riser {
+  stroke-width: 1;
+  opacity: 0.7;
+}
+
+.tree-svg .cursor {
+  fill: rgb(34 211 238 / 0.12);
+  stroke: var(--color-glow);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  transition: transform 300ms var(--ease-spring);
+  animation: spin 3s linear infinite;
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    fill: var(--color-cobalt-900);
+    stroke: #fff;
+  }
+  50% {
+    fill: var(--color-rose);
+    stroke: var(--color-rose);
+  }
+}
+@keyframes pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes march {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes rise {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+}
+@keyframes spin {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tree-svg .node,
+  .tree-svg .edge,
+  .tree-svg .cursor {
+    transition-duration: 1ms;
+  }
+  .tree-svg .arc,
+  .tree-svg .pop,
+  .dot.live {
+    animation: none;
+  }
+}
+
+.tree-svg .ruler line {
+  stroke: rgb(255 255 255 / 0.08);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+.tree-svg .ruler text {
+  font-size: 8px;
+  font-weight: 300;
+  fill: rgb(232 238 255 / 0.35);
+}
