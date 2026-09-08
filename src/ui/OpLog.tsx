@@ -31,7 +31,7 @@ export function OpLog({ history, head, playing, disabled, onReplay }: Props) {
           Nothing yet. Every insert and delete lands here; click one to replay it.
         </p>
       ) : (
-        <ol ref={listRef} className="log mt-2 min-h-0 flex-1 overflow-y-auto pr-1" aria-label="Operations, click to replay">
+        <ol ref={listRef} className="log mt-2 max-h-72 min-h-0 flex-1 overflow-y-auto pr-1 lg:max-h-none" aria-label="Operations, click to replay">
           {history.map((e, i) => {
             const future = i > head
             const isPlaying = i === playing

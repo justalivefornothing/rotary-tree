@@ -4,7 +4,10 @@ import type { Order } from './usePlayer'
 
 interface Props {
   busy: boolean
+  /** The AVL tree has at least one node — traversals need something to walk. */
   hasTree: boolean
+  /** There is a tree or a history to wipe. */
+  canClear: boolean
   stepMode: boolean
   onInsert: (key: number) => void
   onRemove: (key: number) => void
@@ -17,7 +20,7 @@ interface Props {
 
 const SIZES = [7, 10, 15, 20]
 
-export function Controls({ busy, hasTree, stepMode, onInsert, onRemove, onBulk, onTraverse, onStepMode, onStop, onClear }: Props) {
+export function Controls({ busy, hasTree, canClear, stepMode, onInsert, onRemove, onBulk, onTraverse, onStepMode, onStop, onClear }: Props) {
   const [text, setText] = useState('')
   const [size, setSize] = useState(10)
   const [seed, setSeed] = useState(3)
@@ -115,7 +118,7 @@ export function Controls({ busy, hasTree, stepMode, onInsert, onRemove, onBulk, 
           <button type="button" className="btn" disabled={!busy} onClick={onStop}>
             Stop
           </button>
-          <button type="button" className="btn btn-danger" disabled={!hasTree && !busy} onClick={onClear}>
+          <button type="button" className="btn btn-danger" disabled={!canClear && !busy} onClick={onClear}>
             Clear
           </button>
         </div>

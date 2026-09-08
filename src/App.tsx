@@ -100,7 +100,8 @@ export default function App() {
         <aside className="panel flex flex-col gap-6 p-4 lg:max-h-[calc(100dvh-9rem)]">
           <Controls
             busy={busy}
-            hasTree={!!avl.root || history.length > 0}
+            hasTree={!!avl.root}
+            canClear={!!avl.root || history.length > 0}
             stepMode={stepMode}
             onInsert={(key) => dispatch({ type: 'enqueue', ops: [{ op: 'insert', key }] })}
             onRemove={(key) => dispatch({ type: 'enqueue', ops: [{ op: 'remove', key }] })}
